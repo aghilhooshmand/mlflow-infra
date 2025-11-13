@@ -28,7 +28,7 @@ services:
       - ${POSTGRES_HOST_PORT}:${POSTGRES_CONT_PORT}
     volumes:
       - ./postgres/init/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/data:/var/lib/postgresql
     env_file:
       - .env
     networks:
