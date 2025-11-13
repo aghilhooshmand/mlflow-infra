@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+users=(
+  "zia:ZiaPass123!:FORGE - Classic ML Experiments"
+  "gopi:GopiPass123!:FORGE - GAN Data"
+  "meghana:MeghanaPass123!:FORGE - GAN Data"
+  "yusuf:YusufPass123!:FORGE - Classic ML Experiments"
+  "douglas:DouglasPass123!:FORGE - Classic ML Experiments"
+  "mritunjay:MritunjayPass123!:FORGE - GE Classification"
+  "aghil:AghilPass123!:FORGE - GE Classification"
+)
+
+for entry in "${users[@]}"; do
+  IFS=":" read -r USER PASS EXP <<<"$entry"
+
+  docker compose --env-file .env exec mlflow \
+    python -m mlflow.server.auth.cli create-user \
+      --username "$USER" \
+      --password "$PASS" \
+      --admin false || true
+
+  docker compose --env-file .env exec mlflow \
+    python -m mlflow.server.auth.cli set-experiment-permission \
+      --experiment-name "$EXP" \
+      --username "$USER" \
+      --permission edit || true
+done
+
+docker compose --env-file .env exec mlflow python -m mlflow.server.auth.cli list-users

@@ -34,6 +34,14 @@ export MLFLOW_TRACKING_PASSWORD=<mlflow-password>
 export MLFLOW_S3_ENDPOINT_URL=http://<host>:9000
 ```
 
+For example, Zia can run locally with:
+```
+export MLFLOW_TRACKING_URI=http://localhost:6001
+export MLFLOW_TRACKING_USERNAME=zia
+export MLFLOW_TRACKING_PASSWORD=ZiaPass123!
+export MLFLOW_S3_ENDPOINT_URL=http://localhost:9000
+```
+
 You now have the client configured to log runs to the shared stack.
 
 Quick sanity check (optional):
@@ -52,13 +60,14 @@ Replace `<host>` and credentials if you are running this from a different machin
 
 Need users or permissions?
 ```
-# create user ( if you need add more user, already you have admin user that define in .env file)
+# create user (if you need to add more users)
 docker compose --env-file .env exec mlflow \
-  mlflow security create-user --username teammate --password StrongPass123! --admin false
+  python -m mlflow.server.auth.cli create-user \
+  --username teammate --password StrongPass123! --admin false
 
 # grant edit rights to an existing experiment
 docker compose --env-file .env exec mlflow \
-  mlflow security set-experiment-permission \
+  python -m mlflow.server.auth.cli set-experiment-permission \
   --experiment-name "FORGE - Classic ML Experiments" \
   --username teammate \
   --permission edit
